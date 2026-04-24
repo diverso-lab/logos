@@ -1,0 +1,47 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("user")
+  createdAt DateTime @default(now())
+  logos     Logo[]
+}
+
+model Logo {
+  id          String    @id @default(cuid())
+  slug        String    @unique
+  name        String
+  description String?
+  tags        String    @default("")
+  uploadedById String?
+  uploadedBy  User?     @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  variants    Variant[]
+
+  @@index([slug])
+}
+
+model Variant {
+  id         String   @id @default(cuid())
+  logoId     String
+  logo       Logo     @relation(fields: [logoId], references: [id], onDelete: Cascade)
+  background String
+  format     String
+  filename   String
+  path       String
+  size       Int
+  createdAt  DateTime @default(now())
+
+  @@index([logoId])
+}

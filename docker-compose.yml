@@ -1,0 +1,61 @@
+services:
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: logos
+      POSTGRES_PASSWORD: logos
+      POSTGRES_DB: logos
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U logos -d logos"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.15.3
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - es_data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fs http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+      elasticsearch:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      AUTH_SECRET: ${AUTH_SECRET:-change-me-to-a-long-random-string}
+      DATABASE_URL: postgresql://logos:logos@db:5432/logos?schema=public
+      ELASTICSEARCH_URL: http://elasticsearch:9200
+      ELASTICSEARCH_INDEX: logos
+      STORAGE_DIR: /data/uploads
+      ADMIN_EMAIL: ${ADMIN_EMAIL:-admin@lab.local}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-changeme}
+    ports:
+      - "3000:3000"
+    volumes:
+      - uploads:/data/uploads
+
+volumes:
+  db_data:
+  es_data:
+  uploads:

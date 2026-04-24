@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #fafafa;
+  --fg: #0a0a0a;
+  --muted: #71717a;
+  --border: #e4e4e7;
+  --card: #ffffff;
+  --accent: #0a0a0a;
+}
+
+html,
+body {
+  background: var(--bg);
+  color: var(--fg);
+  font-feature-settings: 'cv11', 'ss01';
+  -webkit-font-smoothing: antialiased;
+}
+
+.checker {
+  background-image:
+    linear-gradient(45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(-45deg, #e4e4e7 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #e4e4e7 75%),
+    linear-gradient(-45deg, transparent 75%, #e4e4e7 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+.dark-checker {
+  background-color: #0a0a0a;
+  background-image:
+    linear-gradient(45deg, #1f1f22 25%, transparent 25%),
+    linear-gradient(-45deg, #1f1f22 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #1f1f22 75%),
+    linear-gradient(-45deg, transparent 75%, #1f1f22 75%);
+  background-size: 16px 16px;
+  background-position: 0 0, 0 8px, 8px -8px, -8px 0;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
