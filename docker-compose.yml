@@ -4,7 +4,7 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_USER: logos
-      POSTGRES_PASSWORD: logos
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-logos}
       POSTGRES_DB: logos
     volumes:
       - db_data:/var/lib/postgresql/data
@@ -44,7 +44,7 @@ services:
     environment:
       NODE_ENV: production
       AUTH_SECRET: ${AUTH_SECRET:-change-me-to-a-long-random-string}
-      DATABASE_URL: postgresql://logos:logos@db:5432/logos?schema=public
+      DATABASE_URL: postgresql://logos:${POSTGRES_PASSWORD:-logos}@db:5432/logos?schema=public
       ELASTICSEARCH_URL: http://elasticsearch:9200
       ELASTICSEARCH_INDEX: logos
       STORAGE_DIR: /data/uploads
